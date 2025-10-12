@@ -61,6 +61,7 @@ flutter:
   assets:
    - assets/fondoagro.webp
    - assets/logo.jpg
+   - assets/fondo.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
