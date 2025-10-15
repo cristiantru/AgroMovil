@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'splash_screen.dart'; // 👈 importa tu splash
 
 void main() {
   runApp(const AgroMarketApp());
@@ -15,7 +16,10 @@ class AgroMarketApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const InicioTemporal(), // ✅ Pantalla temporal
+      home: const SplashScreen(), // 👈 aquí inicia el splash
+      routes: {
+        '/inicio': (context) => const InicioTemporal(), // 👈 ruta a tu pantalla principal
+      },
     );
   }
 }
