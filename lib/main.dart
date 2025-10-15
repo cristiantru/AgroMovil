@@ -1,3 +1,4 @@
+import 'package:agromarket/views/auth/login_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,27 +16,9 @@ class AgroMarketApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const InicioTemporal(), // ✅ Pantalla temporal
+
     );
   }
 }
 
-class InicioTemporal extends StatelessWidget {
-  const InicioTemporal({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('AgroMarket'),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text(
-          'Bienvenido a AgroMarket 🌿',
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-    );
-  }
-}
