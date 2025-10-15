@@ -1,6 +1,7 @@
-import 'package:agromarket/views/auth/login_view.dart';
 import 'package:flutter/material.dart';
-import 'splash_screen.dart'; // 👈 importa tu splash
+import 'package:agromarket/views/auth/login_view.dart'; // ← este import no es necesario si el archivo se llama diferente
+import 'splash_screen.dart';
+import 'package:agromarket/views/auth/login_view.dart' show LoginPage; // 👈 Asegúrate de que este import apunte a donde está LoginPage
 
 void main() {
   runApp(const AgroMarketApp());
@@ -17,12 +18,10 @@ class AgroMarketApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const SplashScreen(), // 👈 aquí inicia el splash
+      home: const SplashScreen(),
       routes: {
-        '/inicio': (context) => const InicioTemporal(), // 👈 ruta a tu pantalla principal
+        '/inicio': (context) => const LoginPage(), // 👈 Aquí está el cambio
       },
     );
   }
 }
-
-
