@@ -25,8 +25,8 @@ class LoginScreen extends StatelessWidget {
           // Contenido central
           Center(
             child: Container(
-              width: 800,
-              height: 450,
+              // Permitir que el ancho crezca hasta 800 pero no forzar una altura fija.
+              constraints: const BoxConstraints(maxWidth: 800),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(16),
