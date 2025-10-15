@@ -1,3 +1,4 @@
+import 'package:agromarket/views/auth/login_view.dart';
 import 'package:flutter/material.dart';
 import 'splash_screen.dart'; // 👈 importa tu splash
 
@@ -24,22 +25,4 @@ class AgroMarketApp extends StatelessWidget {
   }
 }
 
-class InicioTemporal extends StatelessWidget {
-  const InicioTemporal({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('AgroMarket'),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text(
-          'Bienvenido a AgroMarket 🌿',
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-    );
-  }
-}
