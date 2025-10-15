@@ -16,7 +16,7 @@ class AgroMarketApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const LoginPage(),
+
     );
   }
 }
