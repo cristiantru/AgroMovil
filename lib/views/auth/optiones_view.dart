@@ -1,32 +1,52 @@
 import 'package:agromarket/views/auth/login_view.dart';
+import 'package:agromarket/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class OptionPage extends StatelessWidget {
   const OptionPage({super.key});
 
+  // Método para cerrar sesión
+  Future<void> _logout(BuildContext context) async {
+    final authController = Provider.of<AuthController>(context, listen: false);
+    await authController.logout();
+    
+    if (context.mounted) {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Fondo
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/fondo5.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-
-          // Contenido
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 50),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'AgroMarket',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => _logout(context),
+                        icon: const Icon(
+                          Icons.logout,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
                   Center(
                     child: Column(
                       children: const [
@@ -177,11 +197,9 @@ class OptionPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
