@@ -1,3 +1,4 @@
+import 'package:agromarket/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:agromarket/views/auth/login_view.dart';
@@ -30,6 +31,16 @@ class AgroMarketApp extends StatelessWidget {
           '/home': (context) => const OptionPage(),
         },
       ),
+<<<<<<< HEAD
+=======
+      initialRoute: '/', // Ruta inicial
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/login': (context) => const LoginPage(),
+        '/options': (context) => const OptionPage(),
+        '/home': (context) => const HomePage(),
+      },
+>>>>>>> bf9ec73 (Se realizo el apartado sobre nosotros)
     );
   }
 }

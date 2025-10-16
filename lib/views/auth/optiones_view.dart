@@ -82,7 +82,7 @@ class OptionPage extends StatelessWidget {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
+                                builder: (context) => const HomePage(),
                               ),
                             );
                           },
@@ -128,7 +128,7 @@ class OptionPage extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                const LoginPage(),
+                                                const HomePage(),
                                           ),
                                         );
                                       },
@@ -184,7 +184,7 @@ class OptionPage extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              const LoginPage(),
+                                              const HomePage(),
                                         ),
                                       );
                                     },

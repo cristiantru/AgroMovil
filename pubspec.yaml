@@ -89,6 +89,10 @@ flutter:
    - assets/fondo.jpeg
    - assets/fondo.JPG
    - assets/logoagro.png
+   - assets/images/perfil1.jpg
+   - assets/images/perfil2.jpg
+   - assets/images/perfil3.jpg
+   - assets/images/perfil4.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
