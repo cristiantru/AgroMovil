@@ -1,4 +1,5 @@
-import 'package:agromarket/views/auth/login_view.dart';
+
+import 'package:agromarket/views/home/home_page.dart';
 import 'package:flutter/material.dart';
 
 class OptionPage extends StatelessWidget {
@@ -62,7 +63,7 @@ class OptionPage extends StatelessWidget {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
+                                builder: (context) => const HomePage(),
                               ),
                             );
                           },
@@ -108,7 +109,7 @@ class OptionPage extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                const LoginPage(),
+                                                const HomePage(),
                                           ),
                                         );
                                       },
@@ -164,7 +165,7 @@ class OptionPage extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              const LoginPage(),
+                                              const HomePage(),
                                         ),
                                       );
                                     },

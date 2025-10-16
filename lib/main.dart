@@ -1,7 +1,8 @@
+import 'package:agromarket/splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:agromarket/views/auth/login_view.dart'; // ← este import no es necesario si el archivo se llama diferente
-import 'splash_screen.dart';
-import 'package:agromarket/views/auth/login_view.dart' show LoginPage; // 👈 Asegúrate de que este import apunte a donde está LoginPage
+import 'package:agromarket/views/auth/login_view.dart';
+import 'package:agromarket/views/home/home_page.dart';
+import 'package:agromarket/views/auth/optiones_view.dart';
 
 void main() {
   runApp(const AgroMarketApp());
@@ -18,9 +19,12 @@ class AgroMarketApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const SplashScreen(),
+      initialRoute: '/', // Ruta inicial
       routes: {
-        '/inicio': (context) => const LoginPage(), // 👈 Aquí está el cambio
+        '/': (context) => const SplashScreen(),
+        '/login': (context) => const LoginPage(),
+        '/options': (context) => const OptionPage(),
+        '/home': (context) => const HomePage(),
       },
     );
   }

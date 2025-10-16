@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/.jpg'),
+                image: AssetImage('assets/fondo.jpeg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -131,33 +131,30 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   const SizedBox(height: 35),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const OptionPage(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 280,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: const Color(0xFF2F4157),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Entrar',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                GestureDetector(
+  onTap: () {
+    // Navega a OptionPage usando ruta nombrada
+    Navigator.pushReplacementNamed(context, '/options');
+  },
+  child: Container(
+    height: 35,
+    width: 280,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      color: const Color(0xFF2F4157),
+    ),
+    child: const Center(
+      child: Text(
+        'Entrar',
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  ),
+),
+
                 ],
               ),
             ),
