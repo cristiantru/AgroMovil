@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Después de 3 segundos, cambia a la pantalla principal
     Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacementNamed(context, '/inicio');
+      Navigator.pushReplacementNamed(context, '/login');
     });
   }
 
