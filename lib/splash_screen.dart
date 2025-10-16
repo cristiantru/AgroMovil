@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:agromarket/controllers/auth_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,9 +24,16 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
 
-    // Después de 3 segundos, cambia a la pantalla principal
-    Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacementNamed(context, '/inicio');
+    // Después de 3 segundos, verificar si el usuario está logueado
+    Timer(const Duration(seconds: 3), () async {
+      final authController = Provider.of<AuthController>(context, listen: false);
+      await authController.checkAuthStatus();
+      
+      if (authController.isLoggedIn) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
     });
   }
 

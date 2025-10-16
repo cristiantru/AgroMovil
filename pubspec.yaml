@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.9.2
+  sdk: ^3.9.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -34,6 +34,30 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  
+  # SharedPreferences para almacenar datos localmente
+  shared_preferences: ^2.2.2
+  
+  # Provider para gestión de estado
+  provider: ^6.1.1
+  
+  # HTTP para comunicación con servidor
+  http: ^1.1.0
+  
+  # Socket.IO para comunicación en tiempo real
+  socket_io_client: ^2.0.3+1
+  
+  # OAuth 2.0 para login con Microsoft/Hotmail
+  oauth2: ^2.0.2
+  
+  # URL Launcher para abrir navegador
+  url_launcher: ^6.2.2
+  
+  # WebView para OAuth
+  webview_flutter: ^4.4.2
+  
+  # Crypto para PKCE
+  crypto: ^3.0.3
 
 dev_dependencies:
   flutter_native_splash: ^2.4.0
@@ -63,6 +87,7 @@ flutter:
    - assets/fondoagro.webp
    - assets/logo.jpg
    - assets/fondo.jpeg
+   - assets/fondo.JPG
    - assets/logoagro.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
