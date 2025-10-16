@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.info_outline),
-              title: const Text('Sobre Nosotros'),
+              title: const Text('Sobre los Desarrolladores'),
               onTap: () {
                 Navigator.push(
                   context,
