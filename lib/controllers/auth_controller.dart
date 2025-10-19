@@ -20,7 +20,19 @@ class AuthController extends ChangeNotifier {
     _clearError();
 
     try {
+      print('🔐 AuthController: Iniciando login para $email');
+      
+      // Primero probar la conexión con el servidor
+      final serverConnected = await ApiService.testServerConnection();
+      if (!serverConnected) {
+        _setError('No se puede conectar al servidor. Verifica tu conexión a internet.');
+        _setLoading(false);
+        notifyListeners();
+        return false;
+      }
+
       final result = await ApiService.login(email, password);
+      print('🔐 AuthController: Resultado del login: $result');
       
       if (result['success']) {
         _currentUser = UserModel.fromJson(result['user']);
@@ -33,12 +45,13 @@ class AuthController extends ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _setError(result['message']);
+        _setError(result['message'] ?? 'Error desconocido en el login');
         _setLoading(false);
         notifyListeners();
         return false;
       }
     } catch (e) {
+      print('❌ AuthController: Error inesperado: $e');
       _setError('Error inesperado: ${e.toString()}');
       _setLoading(false);
       notifyListeners();

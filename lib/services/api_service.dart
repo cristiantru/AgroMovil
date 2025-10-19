@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.1.70:3000/api';
+  static const String baseUrl = 'http://192.168.0.108:3000/api';
   static Map<String, String> get _headers => {
     'Content-Type': 'application/json',
   };
@@ -10,6 +10,7 @@ class ApiService {
   // Login de usuario
   static Future<Map<String, dynamic>> login(String email, String password) async {
     try {
+      print('🔐 Intentando login con email: $email');
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
         headers: _headers,
@@ -19,12 +20,19 @@ class ApiService {
         }),
       );
 
+      print('Respuesta del servidor: ${response.statusCode}');
+      print('Cuerpo de la respuesta: ${response.body}');
+
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final result = jsonDecode(response.body);
+        print('Login exitoso: $result');
+        return result;
       } else {
+        final errorBody = jsonDecode(response.body);
+        print('Error del servidor: ${errorBody['message']}');
         return {
           'success': false,
-          'message': 'Error del servidor: ${response.statusCode}',
+          'message': errorBody['message'] ?? 'Error del servidor: ${response.statusCode}',
         };
       }
     } catch (e) {
@@ -39,6 +47,7 @@ class ApiService {
   // Registro de usuario
   static Future<Map<String, dynamic>> register(String nombre, String email, String password) async {
     try {
+      print('📝 Intentando registro con email: $email');
       final response = await http.post(
         Uri.parse('$baseUrl/register'),
         headers: _headers,
@@ -49,12 +58,19 @@ class ApiService {
         }),
       );
 
+      print('Respuesta del servidor: ${response.statusCode}');
+      print('Cuerpo de la respuesta: ${response.body}');
+
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final result = jsonDecode(response.body);
+        print('Registro exitoso: $result');
+        return result;
       } else {
+        final errorBody = jsonDecode(response.body);
+        print('Error del servidor: ${errorBody['message']}');
         return {
           'success': false,
-          'message': 'Error del servidor: ${response.statusCode}',
+          'message': errorBody['message'] ?? 'Error del servidor: ${response.statusCode}',
         };
       }
     } catch (e) {
@@ -69,13 +85,36 @@ class ApiService {
   // Test de conexión
   static Future<bool> testConnection() async {
     try {
+      print('Probando conexión con el servidor...');
       final response = await http.get(
         Uri.parse('$baseUrl/health'),
         headers: _headers,
       );
+      print('Respuesta del test: ${response.statusCode}');
       return response.statusCode == 200;
     } catch (e) {
       print('Error en test de conexión API: $e');
+      return false;
+    }
+  }
+
+  // Test de conexión con endpoint de login
+  static Future<bool> testServerConnection() async {
+    try {
+      print('Probando conexión con el servidor usando login...');
+      final response = await http.post(
+        Uri.parse('$baseUrl/login'),
+        headers: _headers,
+        body: jsonEncode({
+          'email': 'test@test.com',
+          'password': 'test123',
+        }),
+      );
+      print('Respuesta del servidor: ${response.statusCode}');
+      print('Cuerpo de la respuesta: ${response.body}');
+      return response.statusCode == 200 || response.statusCode == 400; // 400 es esperado para credenciales incorrectas
+    } catch (e) {
+      print('Error conectando al servidor: $e');
       return false;
     }
   }
