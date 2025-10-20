@@ -1,6 +1,6 @@
 import 'package:agromarket/views/auth/optiones_view.dart';
 import 'package:flutter/material.dart';
-import 'register_view.dart'; 
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -158,6 +158,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
+                  
+                
                 ],
               ),
             ),

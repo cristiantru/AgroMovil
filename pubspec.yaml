@@ -34,6 +34,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  flutter_floating_bottom_bar: ^1.3.0
+  curved_navigation_bar: ^1.0.6
 
 dev_dependencies:
   flutter_native_splash: ^2.4.0
@@ -63,6 +65,11 @@ flutter:
    - assets/fondoagro.webp
    - assets/logo.jpg
    - assets/fondo.jpeg
+   - assets/1.png
+   - assets/2.png
+   - assets/fondo.png
+   - assets/image.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,4 +1,6 @@
 import 'package:agromarket/views/auth/login_view.dart';
+import 'package:agromarket/views/auth/register_view.dart';
+import 'package:agromarket/views/product_admin/register_product_view.dart';
 import 'package:flutter/material.dart';
 
 class OptionPage extends StatelessWidget {
@@ -9,16 +11,6 @@ class OptionPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/fondo5.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-
           // Contenido
           SafeArea(
             child: SingleChildScrollView(
@@ -108,7 +100,7 @@ class OptionPage extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                const LoginPage(),
+                                                const RegisterProductView(),
                                           ),
                                         );
                                       },
