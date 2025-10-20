@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:agromarket/controllers/auth_controller.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -27,9 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _register() async {
-    final authController = Provider.of<AuthController>(context, listen: false);
-    
-    // Validaciones
+    // Validaciones básicas
     if (_nombreController.text.isEmpty) {
       _showErrorDialog('Por favor, ingresa tu nombre');
       return;
@@ -55,16 +51,10 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    final success = await authController.register(
-      _nombreController.text.trim(),
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
-
-    if (success && mounted) {
+    // Simular proceso de registro y navegación directa
+    await Future.delayed(const Duration(seconds: 1));
+    if (mounted) {
       _showSuccessDialog();
-    } else if (mounted) {
-      _showErrorDialog(authController.errorMessage ?? 'Error al registrarse');
     }
   }
 
@@ -274,41 +264,26 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 30),
                     
                     // Botón de registro
-                    Consumer<AuthController>(
-                      builder: (context, authController, child) {
-                        return GestureDetector(
-                          onTap: authController.isLoading ? null : _register,
-                          child: Container(
-                            width: double.infinity,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: authController.isLoading
-                                  ? Colors.grey
-                                  : const Color(0xFF2E7D32),
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Center(
-                              child: authController.isLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Registrarse',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                    GestureDetector(
+                      onTap: _register,
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2E7D32),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Registrarse',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     ),
                     
                     const SizedBox(height: 30),
