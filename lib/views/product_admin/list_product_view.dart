@@ -1,13 +1,13 @@
 import 'package:agromarket/estructure/product_estructure.dart';
 import 'package:flutter/material.dart';
 
-class ProductsView extends StatelessWidget {
-  const ProductsView({super.key});
+class ListProductView extends StatelessWidget {
+  const ListProductView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ProductEstructureView(
-      title: 'Mis Productos',
+      title: 'Mis Productossss',
       showSearchBar: true,
       searchHint: 'Buscar productos...',
 
@@ -24,7 +24,7 @@ class ProductsView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  'assets/1.png',
+                  'assets/.png',
                   height: 150,
                   width: 130,
                   fit: BoxFit.cover,

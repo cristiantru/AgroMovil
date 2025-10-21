@@ -1,43 +1,33 @@
+import 'package:agromarket/views/auth/optiones_view.dart';
+import 'package:agromarket/views/product_admin/list_product_view.dart';
+import 'package:agromarket/views/product_admin/products_seller_view.dart';
+import 'package:agromarket/views/profile/profile_view.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
-/// Widget principal que proporciona una estructura base para pantallas de productos
-/// con barra de búsqueda y navegación inferior curva
 class ProductEstructureView extends StatefulWidget {
-  // Contenido principal de la pantalla
   final Widget? content;
-  
-  // Texto de placeholder para la barra de búsqueda
   final String searchHint;
-  
-  // Callbacks para los botones de navegación
-  final VoidCallback? onHomeTap;
+  final String? title; // 
   final VoidCallback? onProfileTap;
   final VoidCallback? onProductsTap;
-  final VoidCallback? onSearchTap;
   final VoidCallback? onCartTap;
-  
-  // Callback para cambios en la búsqueda
   final Function(String)? onSearchChanged;
-  
-  // Control de visibilidad de la barra de búsqueda
+
   final bool showSearchBar;
-  
-  // Índice del botón de navegación activo
   final int currentIndex;
 
   const ProductEstructureView({
     super.key,
     this.content,
+    this.title, 
     this.searchHint = "Buscar...",
-    this.onHomeTap,
     this.onProfileTap,
     this.onProductsTap,
-    this.onSearchTap,
     this.onCartTap,
     this.onSearchChanged,
     this.showSearchBar = true,
-    this.currentIndex = 2, // Por defecto, productos está activo
+    this.currentIndex = 2, // inicializa en el ícono 
   });
 
   @override
@@ -45,7 +35,6 @@ class ProductEstructureView extends StatefulWidget {
 }
 
 class _ProductEstructureViewState extends State<ProductEstructureView> {
-  // Índice del botón de navegación actualmente seleccionado
   late int currentIndex;
 
   @override
@@ -61,7 +50,21 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
       backgroundColor: const Color(0xFFF9F9F9),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (widget.title != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 16, left: 20, right: 20),
+                child: Text(
+                  widget.title!,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF115213),
+                  ),
+                ),
+              ),
+
             _buildSearchBar(),
             _buildContentArea(),
           ],
@@ -71,10 +74,10 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
     );
   }
 
-  /// Construye la barra de búsqueda con diseño mejorado
+  /// Barra de búsqueda
   Widget _buildSearchBar() {
     if (!widget.showSearchBar) return const SizedBox.shrink();
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -99,14 +102,12 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
     );
   }
 
-  /// Construye el área de contenido principal
+
   Widget _buildContentArea() {
     return Expanded(
       child: widget.content ?? _buildEmptyContent(),
     );
   }
-
-  /// Construye el contenido vacío cuando no hay contenido personalizado
   Widget _buildEmptyContent() {
     return const Center(
       child: Text(
@@ -119,11 +120,11 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
     );
   }
 
-  /// Construye la barra de navegación curva
+  /// Barra de navegación inferior
   Widget _buildCurvedNavigationBar() {
     return CurvedNavigationBar(
       index: currentIndex,
-      height: 75, // Valor máximo permitido por el paquete
+      height: 75,
       backgroundColor: Colors.transparent,
       color: const Color(0xFF8EBF75),
       buttonBackgroundColor: const Color(0xFF115213),
@@ -134,53 +135,48 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
     );
   }
 
-  /// Construye los elementos de la barra de navegación
+  /// Elementos de navegación
   List<Widget> _buildNavigationItems() {
     return [
-      _buildNavItem(Icons.home_outlined, currentIndex == 0),
-      _buildNavItem(Icons.person_outline, currentIndex == 1),
-      _buildNavItem(Icons.qr_code_scanner, currentIndex == 2),
-      _buildNavItem(Icons.search, currentIndex == 3),
-      _buildNavItem(Icons.shopping_bag_outlined, currentIndex == 4),
+      _buildNavItem(Icons.home_outlined, currentIndex == 0), // Home
+      _buildNavItem(Icons.apple_outlined, currentIndex == 1), // Productos
+      _buildNavItem(Icons.qr_code_scanner, currentIndex == 2), // Escáner
+      _buildNavItem(Icons.person, currentIndex == 3), // Perfil
     ];
   }
 
-  /// Maneja el tap en los elementos de navegación
+  /// Maneja los taps de navegación
   void _onNavigationItemTapped(int index) {
-    setState(() {
-      currentIndex = index;
-    });
+    setState(() => currentIndex = index);
     _executeNavigationCallback(index);
   }
 
-  /// Ejecuta el callback correspondiente según el índice seleccionado
   void _executeNavigationCallback(int index) {
     switch (index) {
       case 0:
-        widget.onHomeTap?.call();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const OptionPage()),
+        );
         break;
       case 1:
-        widget.onProfileTap?.call();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ListProductView()),
+        );
         break;
       case 2:
         widget.onProductsTap?.call();
         break;
       case 3:
-        widget.onSearchTap?.call();
-        break;
-      case 4:
-        widget.onCartTap?.call();
-        break;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileView()),
+        );
     }
   }
 
-  /// Maneja el tap en el botón de filtros
-  void _onFilterPressed() {
-    // Aquí podrías abrir filtros o limpiar el texto
-    // Por ahora no hace nada, pero se puede implementar funcionalidad
-  }
-
-  /// Construye el borde del campo de entrada
+  /// Estilo del borde del campo de búsqueda
   OutlineInputBorder _buildInputBorder(Color color, double width) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(30),
@@ -188,7 +184,7 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
     );
   }
 
-  /// Construye un elemento individual de la barra de navegación
+  /// Ícono individual de navegación
   Widget _buildNavItem(IconData icon, bool isSelected) {
     return Icon(
       icon,
