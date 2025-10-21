@@ -4,10 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:agromarket/views/auth/login_view.dart';
 import 'package:agromarket/views/auth/optiones_view.dart';
 import 'package:agromarket/controllers/auth_controller.dart';
-import 'splash_screen.dart';
 
 void main() {
-  runApp(const AgroMarketApp());
+  runApp(AgroMarketApp()); // Sin const aquí
 }
 
 class AgroMarketApp extends StatelessWidget {
@@ -25,22 +24,12 @@ class AgroMarketApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: const SplashScreen(),
+        home: SplashScreen(), // Sin const
         routes: {
-          '/login': (context) => const LoginPage(),
-          '/home': (context) => const OptionPage(),
+          '/login': (context) => LoginPage(), // Sin const
+          '/home': (context) => OptionPage(), // Sin const
         },
       ),
-<<<<<<< HEAD
-=======
-      initialRoute: '/', // Ruta inicial
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/login': (context) => const LoginPage(),
-        '/options': (context) => const OptionPage(),
-        '/home': (context) => const HomePage(),
-      },
->>>>>>> bf9ec73 (Se realizo el apartado sobre nosotros)
     );
   }
 }
