@@ -1,21 +1,29 @@
 class UserModel {
-  final int id;
+  final String id; // Cambiado de int a String para Firebase UID
   final String nombre;
   final String email;
-  final String? password; 
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   UserModel({
     required this.id,
     required this.nombre,
     required this.email,
-    this.password,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] ?? 0,
-      nombre: json['name'] ?? json['nombre'] ?? '',
+      id: json['id'] ?? '',
+      nombre: json['nombre'] ?? '',
       email: json['email'] ?? '',
+      createdAt: json['created_at'] != null 
+          ? DateTime.tryParse(json['created_at'].toString())
+          : null,
+      updatedAt: json['updated_at'] != null 
+          ? DateTime.tryParse(json['updated_at'].toString())
+          : null,
     );
   }
 
@@ -24,35 +32,9 @@ class UserModel {
       'id': id,
       'nombre': nombre,
       'email': email,
-      if (password != null) 'password': password,
+      if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
     };
-  }
-
-  factory UserModel.create({
-    required String nombre,
-    required String email,
-    required String password,
-  }) {
-    return UserModel(
-      id: 0, 
-      nombre: nombre,
-      email: email,
-      password: password,
-    );
-  }
-
-  UserModel copyWith({
-    int? id,
-    String? nombre,
-    String? email,
-    String? password,
-  }) {
-    return UserModel(
-      id: id ?? this.id,
-      nombre: nombre ?? this.nombre,
-      email: email ?? this.email,
-      password: password ?? this.password,
-    );
   }
 
   @override

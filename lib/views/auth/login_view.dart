@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:agromarket/controllers/auth_controller.dart';
 import 'package:agromarket/views/auth/register_view.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,22 +23,44 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    // Funcionalidad de login eliminada - solo navegación directa
+    final authController = Provider.of<AuthController>(context, listen: false);
+    
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       _showErrorDialog('Por favor, completa todos los campos');
       return;
     }
 
-    // Simular carga y navegación directa
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
+    final success = await authController.login(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
+
+    if (success && mounted) {
       Navigator.pushReplacementNamed(context, '/home');
+    } else if (mounted) {
+      _showErrorDialog(authController.errorMessage ?? 'Error al iniciar sesión');
     }
   }
 
   Future<void> _loginWithHotmail() async {
-    // Funcionalidad de login con Microsoft eliminada
-    _showInfoDialog();
+    final authController = Provider.of<AuthController>(context, listen: false);
+    
+    final success = await authController.loginWithMicrosoft(context);
+    
+    if (success) {
+      // Navegar a la página principal
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      // Mostrar error si existe
+      if (authController.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authController.errorMessage!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _showErrorDialog(String message) {
@@ -208,26 +232,41 @@ class _LoginPageState extends State<LoginPage> {
                           
                           const SizedBox(height: 30),
                           
-                          GestureDetector(
-                            onTap: _login,
-                            child: Container(
-                              width: double.infinity,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF2E7D32),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  'Iniciar sesión',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                          Consumer<AuthController>(
+                            builder: (context, authController, child) {
+                              return GestureDetector(
+                                onTap: authController.isLoading ? null : _login,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: authController.isLoading
+                                        ? Colors.grey
+                                        : const Color(0xFF2E7D32),
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  child: Center(
+                                    child: authController.isLoading
+                                        ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : const Text(
+                                            'Iniciar sesión',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
                           
                           const SizedBox(height: 30),

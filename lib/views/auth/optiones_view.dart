@@ -1,19 +1,12 @@
 import 'package:agromarket/views/auth/login_view.dart';
-import 'package:agromarket/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class OptionPage extends StatelessWidget {
   const OptionPage({super.key});
 
-  // Método para cerrar sesión
-  Future<void> _logout(BuildContext context) async {
-    final authController = Provider.of<AuthController>(context, listen: false);
-    await authController.logout();
-    
-    if (context.mounted) {
-      Navigator.pushReplacementNamed(context, '/login');
-    }
+  // Método para cerrar sesión (simplificado)
+  void _logout(BuildContext context) {
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override

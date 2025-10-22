@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:agromarket/controllers/auth_controller.dart';
 
 class ResetPassword extends StatefulWidget {
   const ResetPassword({super.key});
@@ -134,40 +132,29 @@ class _ResetPasswordState extends State<ResetPassword> {
 
                     const SizedBox(height: 30),
 
-                    Consumer<AuthController>(
-                      builder: (context, authController, child) {
-                        return GestureDetector(
-                          child: Container(
-                            width: double.infinity,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: authController.isLoading
-                                  ? Colors.grey
-                                  : const Color(0xFF2E7D32),
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Center(
-                              child: authController.isLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Iniciar sesión',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // Funcionalidad de reset eliminada - solo navegación
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2E7D32),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Enviar enlace',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ],
                 ),
