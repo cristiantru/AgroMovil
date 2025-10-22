@@ -1,3 +1,4 @@
+import 'package:agromarket/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -33,10 +34,10 @@ class AgroMarketApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: const SplashScreen(),
+        home: SplashScreen(), // Sin const
         routes: {
-          '/login': (context) => const LoginPage(),
-          '/home': (context) => const OptionPage(),
+          '/login': (context) => LoginPage(), // Sin const
+          '/home': (context) => OptionPage(), // Sin const
         },
       ),
     );
