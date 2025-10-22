@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:agromarket/controllers/auth_controller.dart';
 import 'package:agromarket/views/auth/register_view.dart';
+import 'package:agromarket/views/auth/reset_password.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -79,21 +80,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _showInfoDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Iniciar sesión con Hotmail'),
-        content: const Text('Esta funcionalidad está en desarrollo. Por ahora, usa el inicio de sesión normal.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -220,11 +206,22 @@ class _LoginPageState extends State<LoginPage> {
 
                                 ],
                               ),
-                              const Text(
-                                '¿Olvidaste tu contraseña?',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const ResetPassword(),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  '¿Olvidaste tu contraseña?',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
                               ),
                             ],

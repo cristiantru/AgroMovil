@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:agromarket/controllers/auth_controller.dart';
 
 class ResetPassword extends StatefulWidget {
   const ResetPassword({super.key});
@@ -8,6 +10,46 @@ class ResetPassword extends StatefulWidget {
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
+  final _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendResetEmail() async {
+    if (_formKey.currentState!.validate()) {
+      final authController = Provider.of<AuthController>(context, listen: false);
+      
+      final success = await authController.sendPasswordResetEmail(_emailController.text.trim());
+      
+      if (success && mounted) {
+        // Mostrar diálogo de confirmación
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Email Enviado'),
+            content: Text(
+              'Se ha enviado un email de recuperación a ${_emailController.text.trim()}. '
+              'Revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Cerrar diálogo
+                  Navigator.pop(context); // Volver al login
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +60,7 @@ class _ResetPasswordState extends State<ResetPassword> {
             top: 0,
             left: 0,
             right: 0,
-            height: MediaQuery.of(context).size.height * 0.70,
+            height: MediaQuery.of(context).size.height * 0.50,
             child: Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
@@ -83,9 +125,11 @@ class _ResetPasswordState extends State<ResetPassword> {
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     Row(
                       children: [
                         const Expanded(
@@ -124,39 +168,78 @@ class _ResetPasswordState extends State<ResetPassword> {
 
                     const SizedBox(height: 40),
 
-                    _buildInputField(
-                      hintText: 'Correo electrónico',
-                      icon: Icons.email,
-                      keyboardType: TextInputType.emailAddress,
-                    ),
+                    _buildEmailField(),
 
                     const SizedBox(height: 30),
 
-                    GestureDetector(
-                      onTap: () {
-                        // Funcionalidad de reset eliminada - solo navegación
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2E7D32),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Enviar enlace',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                    Consumer<AuthController>(
+                      builder: (context, authController, child) {
+                        return GestureDetector(
+                          onTap: authController.isLoading ? null : _sendResetEmail,
+                          child: Container(
+                            width: double.infinity,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: authController.isLoading 
+                                  ? Colors.grey 
+                                  : const Color(0xFF2E7D32),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: Center(
+                              child: authController.isLoading
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Enviar enlace',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
-                  ],
+
+                    // Mostrar error si existe
+                    Consumer<AuthController>(
+                      builder: (context, authController, child) {
+                        if (authController.errorMessage != null) {
+                          return Container(
+                            margin: const EdgeInsets.only(top: 16),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.red.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.error, color: Colors.red, size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    authController.errorMessage!,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -166,23 +249,29 @@ class _ResetPasswordState extends State<ResetPassword> {
     );
   }
 
-  Widget _buildInputField({
-    required String hintText,
-    required IconData icon,
-    TextInputType? keyboardType,
-  }) {
+  Widget _buildEmailField() {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: Colors.grey[300]!),
       ),
-      child: TextField(
-        keyboardType: keyboardType,
+      child: TextFormField(
+        controller: _emailController,
+        keyboardType: TextInputType.emailAddress,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Por favor ingresa tu email';
+          }
+          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+            return 'Por favor ingresa un email válido';
+          }
+          return null;
+        },
         decoration: InputDecoration(
-          hintText: hintText,
+          hintText: 'Correo electrónico',
           hintStyle: TextStyle(color: Colors.grey[500]),
-          prefixIcon: Icon(icon, color: Colors.grey[600]),
+          prefixIcon: Icon(Icons.email, color: Colors.grey[600]),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
@@ -193,68 +282,6 @@ class _ResetPasswordState extends State<ResetPassword> {
     );
   }
 
-  Widget _buildPasswordField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData icon,
-    required bool obscureText,
-    required VoidCallback onToggle,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(color: Colors.grey[500]),
-          prefixIcon: Icon(icon, color: Colors.grey[600]),
-          suffixIcon: GestureDetector(
-            onTap: onToggle,
-            child: Icon(
-              obscureText ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey[600],
-            ),
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 15,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSocialButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(25),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Icon(icon, color: Colors.white, size: 24),
-      ),
-    );
-  }
 }
 
 class SmoothWavePainter extends CustomPainter {

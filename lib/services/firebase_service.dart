@@ -151,6 +151,84 @@ class FirebaseService {
     }
   }
 
+  /// Enviar email de verificación
+  static Future<Map<String, dynamic>> sendEmailVerification() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        return {
+          'success': false,
+          'message': 'No hay usuario autenticado',
+        };
+      }
+
+      if (user.emailVerified) {
+        return {
+          'success': true,
+          'message': 'El email ya está verificado',
+        };
+      }
+
+      print('Enviando email de verificación a: ${user.email}');
+      
+      await user.sendEmailVerification();
+      
+      print('Email de verificación enviado exitosamente');
+      return {
+        'success': true,
+        'message': 'Se ha enviado un email de verificación a ${user.email}',
+      };
+    } catch (e) {
+      print('Error enviando email de verificación: $e');
+      return {
+        'success': false,
+        'message': 'Error enviando email de verificación: ${e.toString()}',
+      };
+    }
+  }
+
+  /// Enviar email de recuperación de contraseña
+  static Future<Map<String, dynamic>> sendPasswordResetEmail(String email) async {
+    try {
+      print('Enviando email de recuperación a: $email');
+      
+      await _auth.sendPasswordResetEmail(email: email);
+      
+      print('Email de recuperación enviado exitosamente');
+      return {
+        'success': true,
+        'message': 'Se ha enviado un email de recuperación a $email',
+      };
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'No existe una cuenta con este email';
+          break;
+        case 'invalid-email':
+          message = 'El email no es válido';
+          break;
+        case 'too-many-requests':
+          message = 'Demasiados intentos. Intenta más tarde';
+          break;
+        default:
+          message = 'Error: ${e.message}';
+      }
+      
+      print('Error enviando email de recuperación: $message');
+      return {
+        'success': false,
+        'message': message,
+      };
+    } catch (e) {
+      print('Error inesperado enviando email: $e');
+      return {
+        'success': false,
+        'message': 'Error inesperado: ${e.toString()}',
+      };
+    }
+  }
+
   /// Cerrar sesión
   static Future<void> signOut() async {
     try {
@@ -249,6 +327,74 @@ class FirebaseService {
 
 
   // Verificar conexión a Firebase
+  /// Registrar usuario de Microsoft OAuth en Firestore
+  static Future<Map<String, dynamic>> registerMicrosoftUser({
+    required String nombre,
+    required String email,
+  }) async {
+    try {
+      print('🔥 FirebaseService: Iniciando registro de usuario Microsoft');
+      print('📧 Email: $email');
+      print('👤 Nombre: $nombre');
+      
+      // Crear un ID único para el usuario de Microsoft
+      final userId = 'microsoft_${email.hashCode}';
+      print('🆔 UserID generado: $userId');
+      
+      // Verificar si el usuario ya existe
+      print('🔍 Verificando si el usuario ya existe...');
+      final userDoc = await _firestore.collection('usuarios').doc(userId).get();
+      
+      if (userDoc.exists) {
+        print('✅ Usuario de Microsoft ya existe, cargando datos...');
+        final userData = userDoc.data()!;
+        print('📊 Datos del usuario existente: $userData');
+        return {
+          'success': true,
+          'message': 'Usuario ya registrado',
+          'user': {
+            'id': userId,
+            'nombre': userData['nombre'] ?? nombre,
+            'email': userData['email'] ?? email,
+          }
+        };
+      }
+      
+      // Crear nuevo usuario de Microsoft
+      print('📝 Creando nuevo usuario de Microsoft en Firestore...');
+      final userData = {
+        'nombre': nombre,
+        'email': email,
+        'provider': 'microsoft',
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      };
+      print('📊 Datos a guardar: $userData');
+      
+      await _firestore.collection('usuarios').doc(userId).set(userData);
+      
+      print('✅ Usuario de Microsoft registrado exitosamente en Firestore');
+      print('🆔 ID del documento: $userId');
+      
+      return {
+        'success': true,
+        'message': 'Usuario de Microsoft registrado exitosamente',
+        'user': {
+          'id': userId,
+          'nombre': nombre,
+          'email': email,
+        }
+      };
+    } catch (e) {
+      print('❌ Error registrando usuario de Microsoft: $e');
+      print('❌ Stack trace: ${StackTrace.current}');
+      return {
+        'success': false,
+        'message': 'Error registrando usuario: ${e.toString()}',
+      };
+    }
+  }
+
   static Future<bool> testConnection() async {
     try {
       await _firestore.collection('test').limit(1).get();

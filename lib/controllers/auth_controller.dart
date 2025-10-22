@@ -85,6 +85,11 @@ class AuthController extends ChangeNotifier {
       if (result['success']) {
         _currentUser = UserModel.fromJson(result['user']);
         _isLoggedIn = true;
+        
+        // Enviar email de verificación automáticamente
+        print('📧 Enviando email de verificación automáticamente...');
+        await sendEmailVerification();
+        
         _setLoading(false);
         notifyListeners();
         return true;
@@ -118,34 +123,35 @@ class AuthController extends ChangeNotifier {
       if (microsoftUser != null) {
         print('✅ AuthController: Usuario de Microsoft obtenido: ${microsoftUser['email']}');
         
-        // Verificar si el usuario ya existe en Firebase
-        final existingUser = await _checkUserExists(microsoftUser['email']);
+        // Registrar usuario de Microsoft en Firebase
+        print('📝 AuthController: Registrando usuario de Microsoft en Firebase...');
+        print('📧 Email recibido: ${microsoftUser['email']}');
+        print('👤 Nombre recibido: ${microsoftUser['name']}');
         
-        if (existingUser != null) {
-          // Usuario ya existe, usar sus datos
-          _currentUser = existingUser;
-          print('✅ Usuario existente encontrado: ${existingUser.nombre}');
+        final registerResult = await FirebaseService.registerMicrosoftUser(
+          nombre: microsoftUser['name'] ?? 'Usuario Microsoft',
+          email: microsoftUser['email'] ?? '',
+        );
+        
+        print('📊 AuthController: Resultado del registro: $registerResult');
+        
+        if (registerResult['success']) {
+          _currentUser = UserModel.fromJson(registerResult['user']);
+          print('✅ AuthController: Usuario Microsoft registrado en Firebase: ${_currentUser!.nombre}');
+          print('🆔 ID del usuario: ${_currentUser!.id}');
+          
+          // Limpiar errores
+          _clearError();
         } else {
-          // Usuario nuevo, registrarlo en Firebase
-          print('📝 Registrando nuevo usuario de Microsoft...');
-          final registerResult = await FirebaseService.registerWithEmail(
+          // Si falla el registro, crear usuario temporal
+          _currentUser = UserModel(
+            id: 'microsoft_${microsoftUser['email']?.hashCode ?? 'user'}',
             nombre: microsoftUser['name'] ?? 'Usuario Microsoft',
             email: microsoftUser['email'] ?? '',
-            password: 'microsoft_oauth_temp', // Password temporal
           );
-          
-          if (registerResult['success']) {
-            _currentUser = UserModel.fromJson(registerResult['user']);
-            print('✅ Usuario registrado exitosamente: ${_currentUser!.nombre}');
-          } else {
-            // Si falla el registro, crear usuario local temporal
-            _currentUser = UserModel(
-              id: 'temp_microsoft_user',
-              nombre: microsoftUser['name'] ?? 'Usuario Microsoft',
-              email: microsoftUser['email'] ?? '',
-            );
-            print('⚠️ Registro falló, usando usuario temporal');
-          }
+          print('⚠️ AuthController: Registro en Firebase falló, usando usuario temporal');
+          print('❌ Error: ${registerResult['message']}');
+          _setError('Usuario registrado localmente. Algunas funciones pueden estar limitadas.');
         }
         
         _isLoggedIn = true;
@@ -167,23 +173,73 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  // ========== UTILIDADES ==========
+  // ========== VERIFICACIÓN DE EMAIL ==========
 
-  /// Verificar si un usuario ya existe en Firebase
-  Future<UserModel?> _checkUserExists(String email) async {
+  /// Enviar email de verificación
+  Future<bool> sendEmailVerification() async {
+    _setLoading(true);
+    _clearError();
+
     try {
-      final users = await FirebaseService.getAllUsers();
-      for (var user in users) {
-        if (user['email'] == email) {
-          return UserModel.fromJson(user);
-        }
+      print('📧 AuthController: Enviando email de verificación');
+      
+      final result = await FirebaseService.sendEmailVerification();
+      
+      if (result['success']) {
+        _setLoading(false);
+        notifyListeners();
+        print('✅ Email de verificación enviado');
+        return true;
+      } else {
+        _setError(result['message']);
+        _setLoading(false);
+        notifyListeners();
+        return false;
       }
-      return null;
     } catch (e) {
-      print('❌ Error verificando usuario existente: $e');
-      return null;
+      print('❌ AuthController: Error enviando email de verificación: $e');
+      _setError('Error enviando email de verificación: ${e.toString()}');
+      _setLoading(false);
+      notifyListeners();
+      return false;
     }
   }
+
+  // ========== RECUPERACIÓN DE CONTRASEÑA ==========
+
+  /// Enviar email de recuperación de contraseña
+  Future<bool> sendPasswordResetEmail(String email) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      print('AuthController: Enviando email de recuperación a $email');
+      
+      final result = await FirebaseService.sendPasswordResetEmail(email);
+      
+      print('AuthController: Resultado del envío: $result');
+      
+      if (result['success']) {
+        _setLoading(false);
+        notifyListeners();
+        return true;
+      } else {
+        _setError(result['message'] ?? 'Error enviando email de recuperación');
+        _setLoading(false);
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      print('AuthController: Error inesperado: $e');
+      _setError('Error inesperado: ${e.toString()}');
+      _setLoading(false);
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // ========== UTILIDADES ==========
+
 
   /// Cargar datos del usuario desde Firebase
   Future<void> _loadUserData(String uid) async {
