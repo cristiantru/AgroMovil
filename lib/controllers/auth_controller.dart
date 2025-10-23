@@ -108,57 +108,6 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  /// Registro con roles y datos adicionales
-  Future<bool> registerWithRole(
-    String nombre, 
-    String email, 
-    String password, 
-    UserRole role,
-    String? nombreLocal,
-    String? direccion,
-  ) async {
-    _setLoading(true);
-    _clearError();
-
-    try {
-      print('📝 AuthController: Iniciando registro con rol para $email - Rol: $role');
-      
-      final result = await FirebaseService.registerWithEmailAndRole(
-        nombre: nombre,
-        email: email,
-        password: password,
-        role: role,
-        nombreLocal: nombreLocal,
-        direccion: direccion,
-      );
-      
-      print('📝 AuthController: Resultado del registro con rol: $result');
-      
-      if (result['success']) {
-        _currentUser = UserModel.fromJson(result['user']);
-        _isLoggedIn = true;
-        
-        // Enviar email de verificación automáticamente
-        print('📧 Enviando email de verificación automáticamente...');
-        await sendEmailVerification();
-        
-        _setLoading(false);
-        notifyListeners();
-        return true;
-      } else {
-        _setError(result['message'] ?? 'Error desconocido en el registro');
-        _setLoading(false);
-        notifyListeners();
-        return false;
-      }
-    } catch (e) {
-      print('❌ AuthController: Error inesperado: $e');
-      _setError('Error inesperado: ${e.toString()}');
-      _setLoading(false);
-      notifyListeners();
-      return false;
-    }
-  }
 
   // ========== MICROSOFT/HOTMAIL AUTH ==========
 
@@ -200,7 +149,6 @@ class AuthController extends ChangeNotifier {
             id: 'microsoft_${microsoftUser['email']?.hashCode ?? 'user'}',
             nombre: microsoftUser['name'] ?? 'Usuario Microsoft',
             email: microsoftUser['email'] ?? '',
-            role: UserRole.comprador,
           );
           print('⚠️ AuthController: Registro en Firebase falló, usando usuario temporal');
           print('❌ Error: ${registerResult['message']}');
