@@ -1,6 +1,5 @@
 import 'package:agromarket/views/auth/optiones_view.dart';
 import 'package:agromarket/views/product_admin/list_product_view.dart';
-import 'package:agromarket/views/product_admin/products_seller_view.dart';
 import 'package:agromarket/views/profile/profile_view.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
