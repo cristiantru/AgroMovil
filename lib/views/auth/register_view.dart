@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:agromarket/controllers/auth_controller.dart';
+import 'package:agromarket/models/user_model.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,8 +15,11 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _nombreLocalController = TextEditingController();
+  final _direccionController = TextEditingController();
   bool _obscureText = true;
   bool _obscureRepeatText = true;
+  UserRole _selectedRole = UserRole.comprador;
 
   @override
   void dispose() {
@@ -23,6 +27,8 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _nombreLocalController.dispose();
+    _direccionController.dispose();
     super.dispose();
   }
 
@@ -55,10 +61,26 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    final success = await authController.register(
+    // Validaciones específicas por rol
+    if (_selectedRole == UserRole.vendedor || _selectedRole == UserRole.ambos) {
+      if (_nombreLocalController.text.isEmpty) {
+        _showErrorDialog('Por favor, ingresa el nombre de tu local o empresa');
+        return;
+      }
+      
+      if (_direccionController.text.isEmpty) {
+        _showErrorDialog('Por favor, ingresa la dirección de tu local');
+        return;
+      }
+    }
+
+    final success = await authController.registerWithRole(
       _nombreController.text.trim(),
       _emailController.text.trim(),
       _passwordController.text,
+      _selectedRole,
+      _nombreLocalController.text.trim().isNotEmpty ? _nombreLocalController.text.trim() : null,
+      _direccionController.text.trim().isNotEmpty ? _direccionController.text.trim() : null,
     );
 
     if (success && mounted) {
@@ -230,7 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       icon: Icons.person,
                       keyboardType: TextInputType.text,
                     ),
-                    
+
                     const SizedBox(height: 20),
                     
                     // Campo de email
@@ -272,6 +294,34 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     
                     const SizedBox(height: 30),
+                    
+                    // Selección de rol
+                    _buildRoleSelector(),
+                    
+                    const SizedBox(height: 20),
+                    
+                    // Campos condicionales para vendedores
+                    if (_selectedRole == UserRole.vendedor || _selectedRole == UserRole.ambos) ...[
+                      _buildInputField(
+                        controller: _nombreLocalController,
+                        hintText: 'Nombre del local o empresa',
+                        icon: Icons.store,
+                        keyboardType: TextInputType.text,
+                      ),
+                      
+                      const SizedBox(height: 20),
+                      
+                      _buildInputField(
+                        controller: _direccionController,
+                        hintText: 'Dirección del local',
+                        icon: Icons.location_on,
+                        keyboardType: TextInputType.streetAddress,
+                      ),
+                      
+                      const SizedBox(height: 20),
+                    ],
+                    
+                    const SizedBox(height: 10),
                     
                     // Botón de registro
                     Consumer<AuthController>(
@@ -403,6 +453,109 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRoleSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Tipo de cuenta',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1B5E20),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _buildRoleOption(
+                role: UserRole.comprador,
+                title: 'Comprador',
+                icon: Icons.shopping_cart,
+                description: 'Solo comprar',
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildRoleOption(
+                role: UserRole.vendedor,
+                title: 'Vendedor',
+                icon: Icons.store,
+                description: 'Solo vender',
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildRoleOption(
+                role: UserRole.ambos,
+                title: 'Ambos',
+                icon: Icons.business,
+                description: 'Comprar y vender',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRoleOption({
+    required UserRole role,
+    required String title,
+    required IconData icon,
+    required String description,
+  }) {
+    final isSelected = _selectedRole == role;
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedRole = role;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFE8F5E8) : Colors.grey[100],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF2E7D32) : Colors.grey[300]!,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? const Color(0xFF2E7D32) : Colors.grey[600],
+              size: 24,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? const Color(0xFF2E7D32) : Colors.grey[700],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              description,
+              style: TextStyle(
+                fontSize: 10,
+                color: isSelected ? const Color(0xFF2E7D32) : Colors.grey[500],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

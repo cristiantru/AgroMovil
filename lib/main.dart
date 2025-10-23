@@ -1,4 +1,3 @@
-import 'package:agromarket/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,7 +5,6 @@ import 'package:agromarket/views/auth/login_view.dart';
 import 'package:agromarket/views/auth/optiones_view.dart';
 import 'package:agromarket/controllers/auth_controller.dart';
 import 'package:agromarket/firebase_options.dart';
-import 'splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,10 +32,9 @@ class AgroMarketApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: SplashScreen(), // Sin const
+        home: const LoginPage(), 
         routes: {
-          '/login': (context) => LoginPage(), // Sin const
-          '/home': (context) => OptionPage(), // Sin const
+          '/home': (context) => OptionPage(), 
         },
       ),
     );

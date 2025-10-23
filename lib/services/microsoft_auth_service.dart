@@ -9,8 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 
 class MicrosoftAuthService {
-  // Valores de la aplicación Azure
-  static const String _clientId = '59f0fcc3-2aac-481a-9f60-c877b70de41f'; // Tu Application (client) ID
+  static const String _clientId = '59f0fcc3-2aac-481a-9f60-c877b70de41f'; // ID del cliente
   static const String _tenantId = '400d4047-e5e5-4ae6-96d7-e2eb8cfe4435'; // Tu Directory (tenant) ID
   static const String _redirectUri = 'msauth://com.example.agromarket/oauth2redirect';
   static const String _authority = 'https://login.microsoftonline.com/400d4047-e5e5-4ae6-96d7-e2eb8cfe4435/oauth2/v2.0';
@@ -20,7 +19,6 @@ class MicrosoftAuthService {
   static String? _codeChallenge;
 
   static void _generatePKCE() {
-    // Generar código de verificación
     final random = Random.secure();
     final bytes = List<int>.generate(32, (i) => random.nextInt(256));
     _codeVerifier = base64Url.encode(bytes).replaceAll('=', '');

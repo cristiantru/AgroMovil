@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:agromarket/models/user_model.dart';
 
 class FirebaseService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -67,6 +68,95 @@ class FirebaseService {
       };
     } catch (e) {
       print('Error inesperado en registro: $e');
+      return {
+        'success': false,
+        'message': 'Error inesperado: ${e.toString()}',
+      };
+    }
+  }
+
+  /// Registro con roles y datos adicionales
+  static Future<Map<String, dynamic>> registerWithEmailAndRole({
+    required String nombre,
+    required String email,
+    required String password,
+    required UserRole role,
+    String? nombreLocal,
+    String? direccion,
+  }) async {
+    try {
+      print('Registrando usuario con rol: $email - Rol: $role');
+      
+      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        // Preparar datos del usuario
+        Map<String, dynamic> userData = {
+          'nombre': nombre,
+          'email': email,
+          'role': role.toString().split('.').last,
+          'created_at': FieldValue.serverTimestamp(),
+          'updated_at': FieldValue.serverTimestamp(),
+        };
+
+        // Agregar datos específicos de vendedor si aplica
+        if (role == UserRole.vendedor || role == UserRole.ambos) {
+          if (nombreLocal != null && nombreLocal.isNotEmpty) {
+            userData['nombre_local'] = nombreLocal;
+          }
+          if (direccion != null && direccion.isNotEmpty) {
+            userData['direccion'] = direccion;
+          }
+        }
+
+        // Guardar datos en Firestore
+        await _firestore.collection('usuarios').doc(userCredential.user!.uid).set(userData);
+
+        print('Usuario registrado exitosamente con rol: $role');
+        return {
+          'success': true,
+          'message': 'Usuario registrado exitosamente',
+          'user': {
+            'id': userCredential.user!.uid,
+            'nombre': nombre,
+            'email': email,
+            'role': role.toString().split('.').last,
+            if (nombreLocal != null && nombreLocal.isNotEmpty) 'nombre_local': nombreLocal,
+            if (direccion != null && direccion.isNotEmpty) 'direccion': direccion,
+          }
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Error creando usuario',
+        };
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'weak-password':
+          message = 'La contraseña es muy débil';
+          break;
+        case 'email-already-in-use':
+          message = 'El email ya está registrado';
+          break;
+        case 'invalid-email':
+          message = 'El email no es válido';
+          break;
+        default:
+          message = 'Error de autenticación: ${e.message}';
+      }
+      
+      print('Error en registro con rol: $message');
+      return {
+        'success': false,
+        'message': message,
+      };
+    } catch (e) {
+      print('Error inesperado en registro con rol: $e');
       return {
         'success': false,
         'message': 'Error inesperado: ${e.toString()}',
