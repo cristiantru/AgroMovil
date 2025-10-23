@@ -26,28 +26,76 @@ class _ResetPasswordState extends State<ResetPassword> {
       final success = await authController.sendPasswordResetEmail(_emailController.text.trim());
       
       if (success && mounted) {
-        // Mostrar diálogo de confirmación
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Email Enviado'),
-            content: Text(
-              'Se ha enviado un email de recuperación a ${_emailController.text.trim()}. '
-              'Revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Cerrar diálogo
-                  Navigator.pop(context); // Volver al login
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+        _showSuccessSnackBar('Email de recuperación enviado. Revisa tu bandeja de entrada');
+        Navigator.pop(context);
+      } else if (mounted) {
+        _showErrorSnackBar(authController.errorMessage ?? 'Error al enviar el email. Inténtalo de nuevo');
       }
     }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.red.shade600,
+        behavior: SnackBarBehavior.fixed,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
+        duration: const Duration(seconds: 4),
+        animation: CurvedAnimation(
+          parent: kAlwaysCompleteAnimation,
+          curve: Curves.easeOut,
+        ),
+      ),
+    );
+  }
+
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF115213),
+        behavior: SnackBarBehavior.fixed,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
+        duration: const Duration(seconds: 3),
+        animation: CurvedAnimation(
+          parent: kAlwaysCompleteAnimation,
+          curve: Curves.easeOut,
+        ),
+      ),
+    );
   }
 
   @override

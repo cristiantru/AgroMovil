@@ -40,6 +40,7 @@ dependencies:
   firebase_auth: ^5.3.1
   cloud_firestore: ^5.4.4
   provider: ^6.1.1
+  curved_navigation_bar: ^1.0.6
   
   # OAuth 2.0 para login con Microsoft/Hotmail
   oauth2: ^2.0.2

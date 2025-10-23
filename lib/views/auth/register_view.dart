@@ -31,27 +31,27 @@ class _RegisterPageState extends State<RegisterPage> {
     
     // Validaciones básicas
     if (_nombreController.text.isEmpty) {
-      _showErrorDialog('Por favor, ingresa tu nombre');
+      _showErrorSnackBar('Por favor, ingresa tu nombre completo');
       return;
     }
     
     if (_emailController.text.isEmpty) {
-      _showErrorDialog('Por favor, ingresa tu email');
+      _showErrorSnackBar('Por favor, ingresa tu correo electrónico');
       return;
     }
     
     if (_passwordController.text.isEmpty) {
-      _showErrorDialog('Por favor, ingresa una contraseña');
+      _showErrorSnackBar('Por favor, ingresa una contraseña segura');
       return;
     }
     
     if (_passwordController.text != _confirmPasswordController.text) {
-      _showErrorDialog('Las contraseñas no coinciden');
+      _showErrorSnackBar('Las contraseñas no coinciden. Verifica e inténtalo de nuevo');
       return;
     }
     
     if (_passwordController.text.length < 6) {
-      _showErrorDialog('La contraseña debe tener al menos 6 caracteres');
+      _showErrorSnackBar('La contraseña debe tener al menos 6 caracteres');
       return;
     }
 
@@ -63,43 +63,79 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     if (success && mounted) {
-      _showSuccessDialog();
+      _showSuccessSnackBar('¡Cuenta creada exitosamente! Ya puedes iniciar sesión');
     } else if (mounted) {
-      _showErrorDialog(authController.errorMessage ?? 'Error al registrarse');
+      _showErrorSnackBar(authController.errorMessage ?? 'Error al crear la cuenta. Inténtalo de nuevo');
     }
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.red.shade600,
+        behavior: SnackBarBehavior.fixed,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
+        duration: const Duration(seconds: 4),
+        animation: CurvedAnimation(
+          parent: kAlwaysCompleteAnimation,
+          curve: Curves.easeOut,
+        ),
       ),
     );
   }
 
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Registro Exitoso'),
-        content: const Text('Tu cuenta ha sido creada exitosamente. Ya puedes iniciar sesión.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('OK'),
-          ),
-        ],
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF115213),
+        behavior: SnackBarBehavior.fixed,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
+        duration: const Duration(seconds: 3),
+        animation: CurvedAnimation(
+          parent: kAlwaysCompleteAnimation,
+          curve: Curves.easeOut,
+        ),
+        action: SnackBarAction(
+          label: 'Iniciar Sesión',
+          textColor: Colors.white,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
     );
   }

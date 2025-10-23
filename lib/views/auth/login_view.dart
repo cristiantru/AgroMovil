@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
     final authController = Provider.of<AuthController>(context, listen: false);
     
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      _showErrorDialog('Por favor, completa todos los campos');
+      _showErrorSnackBar('Por favor, completa todos los campos requeridos');
       return;
     }
 
@@ -37,9 +37,10 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (success && mounted) {
+      _showSuccessSnackBar('¡Bienvenido! Has iniciado sesión correctamente');
       Navigator.pushReplacementNamed(context, '/home');
     } else if (mounted) {
-      _showErrorDialog(authController.errorMessage ?? 'Error al iniciar sesión');
+      _showErrorSnackBar(authController.errorMessage ?? 'Error al iniciar sesión. Verifica tus credenciales');
     }
   }
 
@@ -49,33 +50,73 @@ class _LoginPageState extends State<LoginPage> {
     final success = await authController.loginWithMicrosoft(context);
     
     if (success) {
-      // Navegar a la página principal
+      _showSuccessSnackBar('¡Bienvenido! Has iniciado sesión con Microsoft');
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      // Mostrar error si existe
-      if (authController.errorMessage != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(authController.errorMessage!),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      _showErrorSnackBar(authController.errorMessage ?? 'Error al iniciar sesión con Microsoft. Inténtalo de nuevo');
     }
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.red.shade600,
+        behavior: SnackBarBehavior.fixed,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
+        duration: const Duration(seconds: 4),
+        animation: CurvedAnimation(
+          parent: kAlwaysCompleteAnimation,
+          curve: Curves.easeOut,
+        ),
+      ),
+    );
+  }
+
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF115213),
+        behavior: SnackBarBehavior.fixed,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
+        duration: const Duration(seconds: 3),
+        animation: CurvedAnimation(
+          parent: kAlwaysCompleteAnimation,
+          curve: Curves.easeOut,
+        ),
       ),
     );
   }

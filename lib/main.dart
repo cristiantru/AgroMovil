@@ -34,7 +34,7 @@ class AgroMarketApp extends StatelessWidget {
         ),
         home: const LoginPage(), 
         routes: {
-          '/home': (context) => OptionPage(), 
+          '/home': (context) => const OptionPage(), 
         },
       ),
     );
