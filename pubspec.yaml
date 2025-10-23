@@ -70,6 +70,8 @@ flutter:
    - assets/2.png
    - assets/fondo.png
    - assets/image.png
+   - assets/hojas.png
+   - assets/22.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
