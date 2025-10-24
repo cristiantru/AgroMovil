@@ -63,16 +63,8 @@ class _RegisterProductViewState extends State<RegisterProductView> with TickerPr
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/22.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: const Color.fromARGB(255, 255, 255, 255),
             ),
           ),
           SafeArea(
@@ -85,7 +77,7 @@ class _RegisterProductViewState extends State<RegisterProductView> with TickerPr
                     child: Center(
                       child: Container(
                         width: constraints.maxWidth * 0.95,
-                        height: constraints.maxHeight * 0.9,
+                        height: constraints.maxHeight * 10,
                         margin: EdgeInsets.symmetric(
                           horizontal: constraints.maxWidth * 0.025,
                           vertical: constraints.maxHeight * 0.05,
@@ -117,21 +109,6 @@ class _RegisterProductViewState extends State<RegisterProductView> with TickerPr
                               ),
                               child: Column(
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text(
-                                        "REGISTRO DE PRODUCTOS",
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF03083A),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                     
-                                    ],
-                                  ),
                                   SizedBox(height: constraints.maxHeight * 0.01),
                                   const Text(
                                     "Completa la información de tu producto",

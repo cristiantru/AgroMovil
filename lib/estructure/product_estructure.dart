@@ -1,4 +1,5 @@
 import 'package:agromarket/views/product_admin/list_product_view.dart';
+import 'package:agromarket/views/product_admin/register_product_view.dart';
 import 'package:agromarket/views/profile/profile_view.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -98,8 +99,8 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
       index: currentIndex,
       height: 75,
       backgroundColor: Colors.transparent,
-      color: const Color.fromARGB(255, 14, 33, 5),
-      buttonBackgroundColor: const Color.fromARGB(255, 141, 199, 134),
+      color: const Color.fromARGB(255, 34, 102, 2),
+      buttonBackgroundColor: const Color.fromARGB(255, 34, 102, 2),
       animationCurve: Curves.easeInOut,
       animationDuration: const Duration(milliseconds: 600),
       items: _buildNavigationItems(),
@@ -110,10 +111,10 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
   /// Elementos de navegación
   List<Widget> _buildNavigationItems() {
     return [
-      _buildNavItem(Icons.home_outlined, currentIndex == 0), // Home
-      _buildNavItem(Icons.apple_outlined, currentIndex == 1), // Productos
-      _buildNavItem(Icons.qr_code_scanner, currentIndex == 2), // Escáner
-      _buildNavItem(Icons.person, currentIndex == 3), // Perfil
+      _buildNavItem(Icons.home_outlined, currentIndex == 0), 
+      _buildNavItem(Icons.add, currentIndex == 1), 
+      _buildNavItem(Icons.add, currentIndex == 2), 
+      _buildNavItem(Icons.person, currentIndex == 3),
     ];
   }
 
@@ -131,14 +132,9 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
       case 0:
         return _buildHomeContent();
       case 1:
-        return const ListProductView();
+        return const RegisterProductView();
       case 2:
-        return const Center(
-          child: Text(
-            'Escáner QR',
-            style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255)),
-          ),
-        );
+        return const ListProductView();
       case 3:
         return const ProfileView();
       default:
@@ -150,13 +146,13 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
   String? _getTitleForIndex(int index) {
     switch (index) {
       case 0:
-        return null; // Sin título para home
+        return null; 
       case 1:
-        return 'Mis Productos';
+        return 'Registro de productos';
       case 2:
-        return 'Escáner QR';
+        return 'Mis productos';
       case 3:
-        return null; // Sin título para perfil (maneja su propio título)
+        return null; 
       default:
         return null;
     }
@@ -202,7 +198,7 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
     return Icon(
       icon,
       size: 28,
-      color: isSelected ? Colors.white : const Color(0xFF115213),
+      color: isSelected ? Colors.white : const Color.fromARGB(255, 255, 255, 255),
     );
   }
 }
