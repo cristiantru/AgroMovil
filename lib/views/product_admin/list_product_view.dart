@@ -31,6 +31,35 @@ class ListProductView extends StatelessWidget {
         ),
         
         // Contenido de productos
+        Row(
+          children: [
+            Expanded(
+          child: Center(
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/logoagro.png',
+                      height: 150,
+                      width: 130,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+
         Expanded(
           child: Center(
             child: Card(
@@ -57,6 +86,8 @@ class ListProductView extends StatelessWidget {
             ),
           ),
         ),
+          ],
+        )
       ],
     );
   }
