@@ -1,5 +1,4 @@
-import 'package:agromarket/views/auth/login_view.dart';
-import 'package:agromarket/views/product_admin/register_product_view.dart';
+import 'package:agromarket/estructure/product_estructure.dart';
 import 'package:flutter/material.dart';
 
 class OptionPage extends StatefulWidget {
@@ -67,21 +66,9 @@ class _OptionPageState extends State<OptionPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/22.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-            ),
-          ),
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -143,7 +130,7 @@ class _OptionPageState extends State<OptionPage> with TickerProviderStateMixin {
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const RegisterProductView(),
+                                          builder: (context) => const ProductEstructureView(),
                                         ),
                                       );
                                     },
@@ -161,7 +148,7 @@ class _OptionPageState extends State<OptionPage> with TickerProviderStateMixin {
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const LoginPage(),
+                                          builder: (context) => const ProductEstructureView(),
                                         ),
                                       );
                                     },

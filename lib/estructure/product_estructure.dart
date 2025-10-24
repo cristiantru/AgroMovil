@@ -1,4 +1,3 @@
-import 'package:agromarket/views/auth/optiones_view.dart';
 import 'package:agromarket/views/product_admin/list_product_view.dart';
 import 'package:agromarket/views/profile/profile_view.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -26,7 +25,7 @@ class ProductEstructureView extends StatefulWidget {
     this.onCartTap,
     this.onSearchChanged,
     this.showSearchBar = true,
-    this.currentIndex = 2, // inicializa en el ícono 
+    this.currentIndex = 0, // inicializa en home
   });
 
   @override
@@ -35,27 +34,31 @@ class ProductEstructureView extends StatefulWidget {
 
 class _ProductEstructureViewState extends State<ProductEstructureView> {
   late int currentIndex;
+  Widget? _currentContent;
 
   @override
   void initState() {
     super.initState();
     currentIndex = widget.currentIndex;
+    _currentContent = widget.content ?? _getContentForIndex(currentIndex);
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentTitle = _getTitleForIndex(currentIndex);
+    
     return Scaffold(
       extendBody: true,
-      backgroundColor: const Color(0xFFF9F9F9),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.title != null)
+            if (currentTitle != null)
               Padding(
                 padding: const EdgeInsets.only(top: 16, left: 20, right: 20),
                 child: Text(
-                  widget.title!,
+                  currentTitle,
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -64,7 +67,6 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
                 ),
               ),
 
-            _buildSearchBar(),
             _buildContentArea(),
           ],
         ),
@@ -73,38 +75,9 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
     );
   }
 
-  /// Barra de búsqueda
-  Widget _buildSearchBar() {
-    if (!widget.showSearchBar) return const SizedBox.shrink();
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Material(
-        elevation: 4,
-        borderRadius: BorderRadius.circular(30),
-        shadowColor: Colors.black26,
-        child: TextField(
-          onChanged: widget.onSearchChanged,
-          decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.search, color: Color(0xFF115213)),
-            hintText: widget.searchHint,
-            hintStyle: const TextStyle(color: Colors.grey, fontSize: 16),
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(vertical: 14),
-            enabledBorder: _buildInputBorder(const Color(0xFF115213), 1),
-            focusedBorder: _buildInputBorder(const Color(0xFF115213), 2),
-          ),
-        ),
-      ),
-    );
-  }
-
-
   Widget _buildContentArea() {
     return Expanded(
-      child: widget.content ?? _buildEmptyContent(),
+      child: _currentContent ?? _buildEmptyContent(),
     );
   }
   Widget _buildEmptyContent() {
@@ -125,8 +98,8 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
       index: currentIndex,
       height: 75,
       backgroundColor: Colors.transparent,
-      color: const Color(0xFF8EBF75),
-      buttonBackgroundColor: const Color(0xFF115213),
+      color: const Color.fromARGB(255, 14, 33, 5),
+      buttonBackgroundColor: const Color.fromARGB(255, 141, 199, 134),
       animationCurve: Curves.easeInOut,
       animationDuration: const Duration(milliseconds: 600),
       items: _buildNavigationItems(),
@@ -146,42 +119,83 @@ class _ProductEstructureViewState extends State<ProductEstructureView> {
 
   /// Maneja los taps de navegación
   void _onNavigationItemTapped(int index) {
-    setState(() => currentIndex = index);
-    _executeNavigationCallback(index);
+    setState(() {
+      currentIndex = index;
+      _currentContent = _getContentForIndex(index);
+    });
   }
 
-  void _executeNavigationCallback(int index) {
+  /// Obtiene el contenido correspondiente al índice
+  Widget _getContentForIndex(int index) {
     switch (index) {
       case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const OptionPage()),
-        );
-        break;
+        return _buildHomeContent();
       case 1:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ListProductView()),
-        );
-        break;
+        return const ListProductView();
       case 2:
-        widget.onProductsTap?.call();
-        break;
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ProfileView()),
+        return const Center(
+          child: Text(
+            'Escáner QR',
+            style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255)),
+          ),
         );
+      case 3:
+        return const ProfileView();
+      default:
+        return _buildEmptyContent();
     }
   }
 
-  /// Estilo del borde del campo de búsqueda
-  OutlineInputBorder _buildInputBorder(Color color, double width) {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: BorderSide(color: color, width: width),
+  /// Obtiene el título correspondiente al índice
+  String? _getTitleForIndex(int index) {
+    switch (index) {
+      case 0:
+        return null; // Sin título para home
+      case 1:
+        return 'Mis Productos';
+      case 2:
+        return 'Escáner QR';
+      case 3:
+        return null; // Sin título para perfil (maneja su propio título)
+      default:
+        return null;
+    }
+  }
+
+
+  /// Contenido para la pestaña Home
+  Widget _buildHomeContent() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.home,
+            size: 80,
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
+          SizedBox(height: 20),
+          Text(
+            'Bienvenido a AgroMarket',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF115213),
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Tu plataforma de productos agrícolas',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
     );
   }
+
 
   /// Ícono individual de navegación
   Widget _buildNavItem(IconData icon, bool isSelected) {
