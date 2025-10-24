@@ -1,6 +1,6 @@
-import 'package:agromarket/views/about/about_page.dart';
 import 'package:flutter/material.dart';
- // <- Aquí importas la página de Sobre Nosotros
+import 'package:agromarket/views/about/about_page.dart';
+import 'package:agromarket/estructura/AppEstructureView.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
               leading: const Icon(Icons.home),
               title: const Text('Inicio'),
               onTap: () {
-                Navigator.pop(context); // Cierra el menú
+                Navigator.pop(context); // Cierra el Drawer
               },
             ),
             ListTile(
@@ -49,11 +49,25 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.shopping_bag_outlined),
+              title: const Text('Productos'),
+              onTap: () {
+                Navigator.pop(context); // Cierra el Drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AgroMarketEstructureView(),
+
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
       body: const Center(
-        child: Text(  
+        child: Text(
           '¡Bienvenido a AgroMarket!',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
